@@ -8,8 +8,6 @@ The solution distributes incoming HTTP traffic across multiple Azure Virtual Mac
 
 The infrastructure is deployed using Azure CLI to support automation, consistency, repeatability and infrastructure-as-code practices.
 
-The project was completed as part of the **Microsoft Azure AZ-104: Microsoft Azure Administrator** training.
-
 ## 🎯 Project Objectives
 
 - Design and deploy a highly available Azure infrastructure.
