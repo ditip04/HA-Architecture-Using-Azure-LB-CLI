@@ -180,4 +180,138 @@ Created an HTTP health probe to continuously monitor the availability of backend
 **Health Monitoring Process:**
 
 1. The load balancer periodically sends health probe requests to backend VMs.
-2. Healthy VMs continue receiving incoming application
+2. Healthy VMs continue receiving incoming application traffic.
+3. If a VM becomes unhealthy, such as when its NGINX service stops responding, it is removed from load-balancing rotation.
+4. Once the VM recovers and passes health checks, it can receive traffic again.
+
+This ensures that user requests are directed only to healthy backend instances.
+
+### Step 5: Deploy Azure Bastion
+
+Deployed Azure Bastion to provide secure administrative access to the backend virtual machines.
+
+**Configuration:**
+- Created the dedicated `AzureBastionSubnet`.
+- Deployed Azure Bastion within the virtual network.
+- Used Azure Portal Bastion connectivity to access the private VMs through SSH.
+- Avoided assigning public IP addresses directly to backend VMs.
+
+This approach reduces the attack surface and provides centralised administrative access.
+
+### Step 6: Configure Network Security Groups (NSGs)
+
+Configured NSG rules to restrict inbound access to backend application virtual machines.
+
+**Security Configuration:**
+
+- Allow HTTP traffic from the `AzureLoadBalancer` service tag to backend VMs.
+- Restrict direct inbound internet traffic to backend VMs.
+- Permit required administrative connectivity through Azure Bastion.
+- Keep backend virtual machines accessible through private IP addresses only.
+
+This ensures that application traffic follows the intended route through the public load balancer rather than accessing backend VMs directly.
+
+## 🔄 High Availability Strategy
+
+The architecture implements multiple mechanisms to improve application availability and reliability.
+
+### 1. Load Balancing
+
+Azure Public Load Balancer distributes incoming HTTP requests across multiple backend virtual machines.
+
+This prevents application traffic from depending on a single server.
+
+### 2. Health Monitoring
+
+Health probes continuously monitor backend VM availability.
+
+Unhealthy instances are automatically removed from traffic distribution until they recover.
+
+### 3. Backend Redundancy
+
+Two backend virtual machines provide redundancy and help maintain application availability if one instance becomes unavailable.
+
+### 4. Secure Administrative Access
+
+Azure Bastion enables secure SSH connectivity without exposing backend VMs directly to the public internet.
+
+### 5. Network Security
+
+NSGs enforce controlled inbound access and ensure that application traffic reaches the backend through the intended network path.
+
+## 🤖 Automation and Reusability
+
+Azure CLI was used to provision the infrastructure instead of relying entirely on manual deployment through the Azure Portal.
+
+**Key Benefits:**
+
+- **Automation:** Infrastructure can be deployed through command-line scripts.
+- **Consistency:** Repeatable resource configurations across environments.
+- **Reusability:** Commands can be adapted for future deployments.
+- **Version Control:** Deployment scripts can be maintained in GitHub.
+- **Reduced Manual Errors:** Standardised deployment procedures improve consistency.
+- **Scalability:** The architecture can be extended with additional backend instances.
+
+## 🧪 Testing and Validation
+
+The deployed environment can be validated using the following tests:
+
+| Test | Expected Result |
+|---|---|
+| Access Load Balancer Public IP | Web application loads successfully |
+| Backend Pool Verification | Both VMs appear in the backend pool |
+| Health Probe Status | Healthy backend instances show Healthy status |
+| Stop NGINX on VM-App-01 | VM-App-01 becomes unhealthy |
+| Access Application After Failure | VM-App-02 continues serving traffic |
+| Restart NGINX on VM-App-01 | VM-App-01 returns to healthy status |
+| Direct Public Access to VMs | Not available |
+| Azure Bastion SSH Access | Secure VM access succeeds |
+
+These tests demonstrate load balancing, health monitoring, backend redundancy and secure administrative access.
+
+## 📊 Project Outcome
+
+Successfully designed and deployed a highly available web application infrastructure using Azure Public Load Balancer and Azure CLI.
+
+The implementation demonstrated the ability to:
+
+- Deploy and configure Azure networking infrastructure.
+- Provision Linux-based virtual machines.
+- Configure Standard SKU Public Load Balancing.
+- Create backend pools and frontend IP configurations.
+- Implement HTTP health probes.
+- Distribute incoming traffic across multiple backend instances.
+- Deploy Azure Bastion for secure administrative access.
+- Configure NSGs to restrict direct internet access.
+- Automate infrastructure deployment using Azure CLI.
+
+## 🧠 Technical Skills Demonstrated
+
+- Microsoft Azure IaaS
+- Azure CLI
+- Azure Virtual Networks (VNet)
+- Azure Subnets
+- Azure Virtual Machines
+- Azure Public Load Balancer
+- Standard SKU Load Balancer
+- Backend Address Pools
+- Frontend IP Configuration
+- Health Probes
+- Load Balancing Rules
+- Network Security Groups (NSGs)
+- Azure Bastion
+- Linux Administration
+- NGINX Web Server
+- High Availability Architecture
+- Cloud Infrastructure Automation
+- Network Security and Troubleshooting
+
+## 🏁 Conclusion
+
+This project successfully demonstrated the deployment of a highly available and secure web application architecture using Microsoft Azure.
+
+By combining Azure Public Load Balancer, health probes, multiple backend virtual machines, Azure Bastion and NSG-based security, the solution provides a structured approach to distributing application traffic and maintaining service availability.
+
+The use of Azure CLI demonstrates practical experience in cloud infrastructure automation, repeatable deployments and network configuration.
+
+This project reflects real-world Azure infrastructure administration scenarios and provides a foundation for designing scalable and resilient cloud-hosted applications.
